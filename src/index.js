@@ -114,14 +114,14 @@ const Footer = () => {
 /*
   Container components
 */
-const mapStateToProps = state => ({
+const mapStateToTodoListProps = state => ({
   todos: getVisibleTodos(state.todos, state.visibilityFilter)
 });
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToTodoListProps = dispatch => {
   return {
     onTodoClick: id => {
-      store.dispatch({
+      dispatch({
         type: "TOGGLE_TODO",
         id
       });
@@ -132,8 +132,8 @@ const mapDispatchToProps = dispatch => {
 // This method is refactored with react-redux and
 // is the alternative for the below commented method
 const VisibleTododList = connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToTodoListProps,
+  mapDispatchToTodoListProps
 )(TodoList);
 
 // class VisibleTododList extends React.Component {
@@ -193,35 +193,43 @@ class FilterLink extends React.Component {
 Presentational + container -> as trivial seperation
 */
 let nextId = 0;
-class AddTodo extends React.Component {
-  render() {
-    return (
-      <div>
-        <input
-          ref={node => {
-            this.input = node;
-          }}
-        />
-        <button
-          onClick={() => {
-            const { value } = this.input;
-            if (!value) return;
-            // Dispatch will invoke the action to be called
-            // And will invoke the corresponding reducer(s)
-            store.dispatch({
-              type: "ADD_TODO",
-              text: value,
-              id: nextId++
-            });
-            this.input.value = "";
-          }}
-        >
-          Add Todo
-        </button>
-      </div>
-    );
-  }
-}
+
+const mapDispatchToAddTodoProps = dispatch => {
+  return {
+    onAddTodoClick: (value, Id) => {
+      dispatch({
+        type: "ADD_TODO",
+        text: value,
+        Id
+      });
+    }
+  };
+};
+
+const AddTodoCom = ({ onAddTodoClick }) => (
+  <div>
+    <input
+      ref={node => {
+        this.input = node;
+      }}
+    />
+    <button
+      onClick={() => {
+        const { value } = this.input;
+        if (!value) return;
+        onAddTodoClick(value, nextId++);
+        this.input.value = "";
+      }}
+    >
+      Add Todo
+    </button>
+  </div>
+);
+
+const AddTodo = connect(
+  null,
+  mapDispatchToAddTodoProps
+)(AddTodoCom);
 
 const Todos = () => (
   <div>
