@@ -26,7 +26,6 @@ const addTodo = (state = [], action) => {
   }
 };
 const visibilityFilter = (state = [], action) => {
-  console.log("visibilityFilter", action.type, action.filter);
   switch (action.type) {
     case "SET_VISIBLITY_FILTER":
       return action.filter;
