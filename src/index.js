@@ -194,19 +194,7 @@ Presentational + container -> as trivial seperation
 */
 let nextId = 0;
 
-const mapDispatchToAddTodoProps = dispatch => {
-  return {
-    onAddTodoClick: (value, id) => {
-      dispatch({
-        type: "ADD_TODO",
-        text: value,
-        id
-      });
-    }
-  };
-};
-
-const AddTodoCom = ({ onAddTodoClick }) => {
+let AddTodo = ({ dispatch }) => {
   let input;
   return (
     <div>
@@ -219,7 +207,11 @@ const AddTodoCom = ({ onAddTodoClick }) => {
         onClick={() => {
           const { value } = input;
           if (!value) return;
-          onAddTodoClick(value, nextId++);
+          dispatch({
+            type: "ADD_TODO",
+            text: value,
+            id: nextId++
+          });
           input.value = "";
         }}
       >
@@ -229,10 +221,7 @@ const AddTodoCom = ({ onAddTodoClick }) => {
   );
 };
 
-const AddTodo = connect(
-  null,
-  mapDispatchToAddTodoProps
-)(AddTodoCom);
+AddTodo = connect()(AddTodo);
 
 const Todos = () => (
   <div>
