@@ -84,16 +84,22 @@ const TodoList = ({ todos, onTodoClick }) => (
   </ul>
 );
 
-const Link = ({ onClick, children }) => (
-  <a
-    href="#"
-    onClick={e => {
-      e.preventDefault();
-      onClick();
-    }}
-  >
-    {`${children}   `}
-  </a>
+const Link = ({ onFilterClick, text, active }) => (
+  <p>
+    {active ? (
+      <span>{text}</span>
+    ) : (
+      <a
+        href="#"
+        onClick={e => {
+          e.preventDefault();
+          onFilterClick();
+        }}
+      >
+        {text}
+      </a>
+    )}
+  </p>
 );
 
 const Footer = () => {
@@ -136,58 +142,25 @@ const VisibleTododList = connect(
   mapDispatchToTodoListProps
 )(TodoList);
 
-// class VisibleTododList extends React.Component {
-//   componentDidMount() {
-//     this.unsubscribe = store.subscribe(() => {
-//       this.forceUpdate();
-//     });
-//   }
-//   componentWillUnmount() {
-//     this.unsubscribe();
-//   }
+const mapStateToFilterLinkProps = (state, ownProps) => {
+  return {
+    active: ownProps.filter === state.visibilityFilter
+  };
+};
+const mapDispatchToFilterLinkProps = (dispatch, ownProps) => {
+  return {
+    onFilterClick: () =>
+      dispatch({
+        type: "SET_VISIBILITY_FILTER",
+        filter: ownProps.filter
+      })
+  };
+};
 
-//   render() {
-//     const state = store.getState();
-//     return (
-//       <TodoList
-//         todos={getVisibleTodos(state.todos, state.visibilityFilter)}
-//         onTodoClick={id => {
-//           store.dispatch({
-//             type: "TOGGLE_TODO",
-//             id
-//           });
-//         }}
-//       />
-//     );
-//   }
-// }
-
-class FilterLink extends React.Component {
-  componentDidMount() {
-    this.unsubscribe = store.subscribe(() => {
-      this.forceUpdate();
-    });
-  }
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
-  render() {
-    const { props } = this;
-    // const state = store.getState();
-    return (
-      <Link
-        onClick={() => {
-          store.dispatch({
-            type: "SET_VISIBILITY_FILTER",
-            filter: props.filter
-          });
-        }}
-      >
-        {props.text}
-      </Link>
-    );
-  }
-}
+const FilterLink = connect(
+  mapStateToFilterLinkProps,
+  mapDispatchToFilterLinkProps
+)(Link);
 
 /*
 Presentational + container -> as trivial seperation
