@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { createStore, combineReducers } from "redux";
+import { Provider, connect } from "react-redux";
 import "./styles.css";
 
 /*
@@ -113,31 +114,53 @@ const Footer = () => {
 /*
   Container components
 */
-class VisibleTododList extends React.Component {
-  componentDidMount() {
-    this.unsubscribe = store.subscribe(() => {
-      this.forceUpdate();
-    });
-  }
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
+const mapStateToProps = state => ({
+  todos: getVisibleTodos(state.todos, state.visibilityFilter)
+});
 
-  render() {
-    const state = store.getState();
-    return (
-      <TodoList
-        todos={getVisibleTodos(state.todos, state.visibilityFilter)}
-        onTodoClick={id => {
-          store.dispatch({
-            type: "TOGGLE_TODO",
-            id
-          });
-        }}
-      />
-    );
-  }
-}
+const mapDispatchToProps = dispatch => {
+  return {
+    onTodoClick: id => {
+      store.dispatch({
+        type: "TOGGLE_TODO",
+        id
+      });
+    }
+  };
+};
+
+// This method is refactored with react-redux and
+// is the alternative for the below commented method
+const VisibleTododList = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TodoList);
+
+// class VisibleTododList extends React.Component {
+//   componentDidMount() {
+//     this.unsubscribe = store.subscribe(() => {
+//       this.forceUpdate();
+//     });
+//   }
+//   componentWillUnmount() {
+//     this.unsubscribe();
+//   }
+
+//   render() {
+//     const state = store.getState();
+//     return (
+//       <TodoList
+//         todos={getVisibleTodos(state.todos, state.visibilityFilter)}
+//         onTodoClick={id => {
+//           store.dispatch({
+//             type: "TOGGLE_TODO",
+//             id
+//           });
+//         }}
+//       />
+//     );
+//   }
+// }
 
 class FilterLink extends React.Component {
   componentDidMount() {
@@ -214,7 +237,9 @@ const store = createStore(todoApp);
 
 const App = () => (
   <div className="App">
-    <Todos />
+    <Provider store={store}>
+      <Todos />
+    </Provider>
   </div>
 );
 
