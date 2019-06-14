@@ -50,8 +50,8 @@ const getVisibleTodos = (todos, filter) => {
       return todos;
   }
 };
-let nextId = 0;
 
+let nextId = 0;
 const Todo = ({ text, completed, id, onClick }) => (
   <li
     onClick={onClick}
@@ -99,6 +99,18 @@ const AddTodo = ({ onAddTodoClick }) => {
   );
 };
 
+const FilterLink = ({ text, onClick }) => (
+  <a
+    href="#"
+    onClick={e => {
+      e.preventDefault();
+      onClick();
+    }}
+  >
+    {`${text}   `}
+  </a>
+);
+
 const Footer = ({ onFilterClick }) => {
   const filterParams = [
     { type: "SHOW_ALL", text: "All" },
@@ -108,15 +120,13 @@ const Footer = ({ onFilterClick }) => {
   return (
     <p>
       {filterParams.map(param => (
-        <a
-          href="#"
-          onClick={e => {
-            e.preventDefault();
+        <FilterLink
+          key={param.type}
+          onClick={_ => {
             onFilterClick(param.type);
           }}
-        >
-          {`${param.text}   `}
-        </a>
+          text={param.text}
+        />
       ))}
     </p>
   );
