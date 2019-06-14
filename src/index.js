@@ -196,35 +196,38 @@ let nextId = 0;
 
 const mapDispatchToAddTodoProps = dispatch => {
   return {
-    onAddTodoClick: (value, Id) => {
+    onAddTodoClick: (value, id) => {
       dispatch({
         type: "ADD_TODO",
         text: value,
-        Id
+        id
       });
     }
   };
 };
 
-const AddTodoCom = ({ onAddTodoClick }) => (
-  <div>
-    <input
-      ref={node => {
-        this.input = node;
-      }}
-    />
-    <button
-      onClick={() => {
-        const { value } = this.input;
-        if (!value) return;
-        onAddTodoClick(value, nextId++);
-        this.input.value = "";
-      }}
-    >
-      Add Todo
-    </button>
-  </div>
-);
+const AddTodoCom = ({ onAddTodoClick }) => {
+  let input;
+  return (
+    <div>
+      <input
+        ref={node => {
+          input = node;
+        }}
+      />
+      <button
+        onClick={() => {
+          const { value } = input;
+          if (!value) return;
+          onAddTodoClick(value, nextId++);
+          input.value = "";
+        }}
+      >
+        Add Todo
+      </button>
+    </div>
+  );
+};
 
 const AddTodo = connect(
   null,
